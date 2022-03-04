@@ -17,40 +17,52 @@ cell_line_colors = {'#41AE76','#238B45', '#005824', '#74A9CF', '#2B8CBE', '#045A
 %% Figure skeleton
 
 figure6 = figure;
-set(figure6, 'Position', [25 9 6.5 9])
+set(figure6, 'Position', [63.5 22.86 18 22.86])
 
-panelA = struct('top', axes('Units', 'inches', 'Position', [0.45 8.15 2.5 0.5]), ...
-    'bottom', axes('Units', 'inches', 'Position', [0.45 7.15 2.5 0.95]));
+panelA = struct('top', axes('Position', [0.92 20.7 7.4 1.5]), ...
+    'bottom', axes('Position', [0.92 18 7.4 2.5]));
 
-panelB = struct('top', axes('Units', 'inches', 'Position', [3.75 8.15 2.5 0.5]), ...
-    'bottom', axes('Units', 'inches', 'Position', [3.75 7.15 2.5 0.95]));
+panelB = struct('top', axes('Position', [10.1 20.7 7.4 1.5]), ...
+    'bottom', axes('Position', [10.1 18 7.4 2.5]));
 
-panelC = struct('bulk', axes('Units', 'inches', 'Position', [0.45 5.85 1.53 0.5]), ...
-    'sc1', axes('Units', 'inches', 'Position', [0.45 4.85 1.53 0.95]), ...
-    'sc2', axes('Units', 'inches', 'Position', [0.45 3.968 1.53 0.832]), ...
-    'sc3', axes('Units', 'inches', 'Position', [0.45 3.086 1.53 0.832]), ...
-    'sc4', axes('Units', 'inches', 'Position', [0.45 2.204 1.53 0.832]), ...
-    'sc5', axes('Units', 'inches', 'Position', [0.45 1.322 1.53 0.832]), ...
-    'sc6', axes('Units', 'inches', 'Position', [0.45 0.44 1.53 0.832]));
+panelC = struct('bulk', axes('Position', [0.92 14.859 4.5 1.5]), ...
+    'sc1', axes(), 'sc2', axes(), 'sc3', axes(), 'sc4', axes(), 'sc5', axes(), 'sc6', axes());
 
-panelD = axes('Units', 'inches', 'Position', [4.65 4.6 1.75 1.75]);
+panelD = axes('Position', [11.5 11.6 6 4.5]);
 
-x = [2.8611 3.9 4.8 5.7522];
-y = [2.4 0.44];
+panelE = struct('left', axes(), 'middle', axes(), 'middle_inset', axes(), 'right', axes());
 
-panelE = struct('left', axes('Units', 'inches', 'Position', [x(1) y(1) 0.62 1.2]), ...
-    'middle',  axes('Units', 'inches', 'Position', [x(2) y(1) 0.62 1.2]), ...
-    'middle_inset', axes('Units', 'inches', 'Position', [x(3) y(1) 0.58 1.2]), ...
-    'right', axes('Units', 'inches', 'Position', [x(4) y(1) 0.62 1.2]));
+insetE = axes('Position', [12.1 6.6096 0.65 3.1], 'Visible', 'off');
 
-insetE = axes('Units', 'inches', 'Position', [4.52 2.4 0.28 1.2]);
+panelF = struct('left', axes(), 'middle', axes(), 'middle_inset', axes(), 'right', axes());
 
-panelF = struct('left', axes('Units', 'inches', 'Position', [x(1) y(2) 0.62 1.2]), ...
-    'middle',  axes('Units', 'inches', 'Position', [x(2) y(2) 0.62 1.2]), ...
-    'middle_inset', axes('Units', 'inches', 'Position', [x(3) y(2) 0.58 1.2]), ...
-    'right', axes('Units', 'inches', 'Position', [x(4) y(2) 0.62 1.2]));
+insetF = axes('Position', [12.1 0.89 0.65 3.1], 'Visible', 'off');
 
-insetF = axes('Units', 'inches', 'Position', [4.52 0.44 0.28 1.2]);
+panels = {panelC.sc1 panelC.sc2 panelC.sc3 panelC.sc4 panelC.sc5 panelC.sc6};
+y = linspace(12.5, 0.89, 6);
+
+for p = 1:6
+    set(panels{p}, 'Units', 'centimeters', 'Position', [0.92 y(p) 4.5 2.2])
+end
+
+panels = {panelE.left panelE.middle panelE.middle_inset panelE.right ...
+    panelF.left panelF.middle panelF.middle_inset panelF.right};
+
+x = [7.25 10.25 12.75 15.5];
+y = [6.6096 0.89];
+
+pos = cell(4, 2);
+for xi = 1:4
+    for yi = 1:2
+        pos{xi, yi} = [x(xi) y(yi) 1.85 3.1];
+    end
+end
+pos = cell2mat(pos(:));
+
+for p = 1:8
+    set(panels{p}, 'Units', 'centimeters', 'Position', pos(p, :))
+    
+end
 
 %% Panel A/B
 
@@ -79,7 +91,7 @@ for p = 1:2
     r = params(p).sample.replication_state_filtered{params(p).Chr}(:, index);
     imagesc(genome_windows{params(p).Chr}(:, 3) ./1e6, 1:num_cells, r', 'AlphaData', ~isnan(r'), ...
         'Parent', params(p).panel.bottom)
-    set(params(p).panel.bottom, 'YDir', 'reverse', 'XLim', params(p).X, 'YLim', [1 num_cells], ...
+    set(params(p).panel.bottom, 'YDir', 'reverse', 'XLim', params(p).X, 'YLim', [0.5 num_cells+0.5], ...
         'CLim', [2 4], 'YTick', Yticks(2:2:end), 'YTickLabel', YLabels(2:2:end), 'Box', 'off')
     colormap(params(p).panel.bottom, [convert_hex(g1_light); convert_hex(params(p).color)])
     xlabel(params(p).panel.bottom, ['Chromosome ' num2str(params(p).Chr) ' Coordinate, Mb'])
@@ -117,7 +129,7 @@ for p = 1:6
     r = params(p).sample.replication_state_filtered{params(p).Chr}(:, index);
     imagesc(genome_windows{params(p).Chr}(:, 3) ./1e6, 1:num_cells, r', 'AlphaData', ~isnan(r'), ...
         'Parent', params(p).panel)
-    set(params(p).panel, 'YDir', 'reverse', 'XLim', params(p).X, 'YLim', [1 num_cells], ...
+    set(params(p).panel, 'YDir', 'reverse', 'XLim', params(p).X, 'YLim', [0.5 num_cells+0.5], ...
         'CLim', [2 4], 'YTick', Yticks(2:2:end), 'YTickLabel', YLabels(2:2:end), 'Box', 'off')
     colormap(params(p).panel, [convert_hex(g1_light); convert_hex(params(p).color)])
     ylabel(params(p).panel, '% Rep.')
@@ -147,8 +159,8 @@ xlabel(panelD, 'Principal Component 1')
 ylabel(panelD, 'Principal Component 2')
 title(panelD, 'Replication Trajectories')
 
-legendD = legend(panelD, samples(1:9));
-set(legendD, 'FontSize', 9, 'Units', 'inches', 'Position', [2.6583 4.75 0.85 1.45])
+legendD = legend(panelD, cell_line_names(1:9));
+set(legendD, 'Units', 'inches', 'Position', [2.8581 4.8945 0.7222 1.1111])
 legendD.ItemTokenSize(1) = 10;
 
 %% Panel E
@@ -156,7 +168,7 @@ legendD.ItemTokenSize(1) = 10;
 params = struct('panel', {panelE.left panelE.middle panelE.right ...
     panelF.left panelF.middle panelF.right}, 'Chr', {3 2 10 6 5 2}, ...
     'sample', {data.H7 data.H7 data.H7 data.MCF7 data.MCF7 data.MCF7}, ...
-    'IR_shown', {313 8 21 58 28 53}, 'inset', [], 'inset_Y', NaN, ...
+    'IR_shown', {312 8 21 58 28 53}, 'inset', [], 'inset_Y', NaN, ...
     'color', {s_light{2} s_light{2} s_light{2} s_light{3} s_light{3} s_light{3}});
 
 params(2).inset = insetE;
@@ -175,11 +187,11 @@ for p = 1:size(params, 2)
     r = params(p).sample.replication_state_filtered{params(p).Chr}(:, index);
     imagesc(genome_windows{params(p).Chr}(:, 3)./ 1e6, 1:num_cells, r', 'AlphaData', r', ...
         'Parent', parent)
-    set(parent, 'YDir', 'reverse', 'XLim', X, 'YLim', [1 num_cells], 'YTick', Yticks(2:2:end), ...
+    set(parent, 'YDir', 'reverse', 'XLim', X, 'YLim', [0.5 num_cells+0.5], 'YTick', Yticks(2:2:end), ...
         'YTickLabel', YLabels(2:2:end), 'Box', 'off')
     colormap(params(p).panel, [convert_hex(g1_light); convert_hex(params(p).color)])
     plot(params(p).sample.single_cell_IRs{params(p).Chr}(params(p).IR_shown, 4) ./ 1e6 .* ...
-        ones(1,2), [1 num_cells], 'k', 'LineWidth', 0.7, 'Parent', parent)
+        ones(1,2), [0.5 num_cells+0.5], 'k', 'LineWidth', 0.6, 'Parent', parent)
     xlabel(parent, ['Chr' num2str(params(p).Chr) ', Mb'])
     
     if ismember(p, [1 4])
@@ -195,7 +207,7 @@ for p = 1:size(params, 2)
     end
     
     if ~isempty(params(p).inset)
-        set(params(p).inset, 'YDir', 'reverse', 'XLim', [0 1], 'YLim', [1 num_cells], ...
+        set(params(p).inset, 'YDir', 'reverse', 'XLim', [0 1], 'YLim', [0.5 num_cells+0.5], ...
             'Visible', 'off')
         params(p).inset_Y = num_cells;
     end
@@ -223,8 +235,8 @@ for p = [2 5]
     num_cells = length(barcodes);
     
     pos = get(parent, 'Position');
-    pos(4) = 0.24 * num_cells;
-    pos(2) = pos(2) + (0.24 * (5 - num_cells));
+    pos(4) = 0.6 * num_cells;
+    pos(2) = pos(2) + (0.6 * (5 - num_cells));
     set(parent, 'Position', pos)
     
     col = (num_cells * 11) + (2 * (num_cells-1));
@@ -256,11 +268,17 @@ for p = [2 5]
     colormap(params(p).panel, [convert_hex(g1_light); convert_hex(params(p).color)])
     
     plot(params(p).sample.single_cell_IRs{params(p).Chr}(params(p).IR_shown, 4) ./ 1e6 * ones(1,2), [1 63], ...
-        'k', 'LineWidth', 0.7, 'Parent', parent)
+        'k', 'LineWidth', 0.6, 'Parent', parent)
     
-    Y(:, 2) = [0 params(p).inset_Y / 1.2 * pos(4)];
+    Y(:, 2) = [0 params(p).inset_Y / 3.1 * pos(4)];
+    if p == 2
+        Y(:, 2) = Y(:, 2) + 10;
+    else
+        Y(:, 2) = Y(:, 2) + 4;
+    end
+    
     for l = 1:2
-        plot([0 1], Y(l, :), 'k:', 'LineWidth', 1, 'Parent', params(p).inset)
+      plot([0 1], Y(l, :), 'k:', 'LineWidth', 0.6, 'Parent', params(p).inset)
     end
     
 end
@@ -269,13 +287,14 @@ end
 
 params = struct('panel', {panelA.top panelB.top panelC.bulk panelD panelE.left panelF.left}, ...
     'text', {'a', 'b', 'c', 'd', 'e', 'f'}, ...
-    'x', {-0.1333 -0.1333 -0.2273 -0.3016 -0.6067 -0.6067}, ...
-    'y', {1.3611 1.3611 1.3056 1.0794 1.1628 1.1628});
+    'x', {-0.0857 -0.0857 -0.1392 -0.1 -0.25 -0.25}, ...
+    'y', {1.1441 1.1441 1.2 1.1 1.05 1.05});
 
 for p = 1:size(params, 2)
     text(params(p).x, params(p).y, params(p).text, 'Parent', params(p).panel, ...
-        'FontSize', 14, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
+        'FontSize', 10, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
 end
 
 printFigure('out/Figure6.pdf')
 close
+clearvars

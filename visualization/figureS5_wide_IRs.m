@@ -8,8 +8,8 @@ load('data/processed/GM12878.mat', 'is_included_chr', 'percent_replicated_filter
     'replication_state_filtered', 'replication_tracks', 'single_cell_IRs', ...
     'replication_state_masked')
 
-figureS2 = figure;
-set(figureS2, 'Position', [25 9 6.5 8.94])
+figureS5 = figure;
+set(figureS5, 'Units', 'inches', 'Position', [25 9 6.5 8.94])
 
 x = linspace(0.45, 4.83, 3);
 y = [7.59 4.64 1.69];
@@ -30,7 +30,7 @@ for yi = 1:3
 end
 
 params = struct('panel', panel_names, 'Chr', {1 2 3 5 6 7 8 4 1}, ...
-    'IR', {331 396 286 21 245 364 400 100 198}, 'window', 2);
+    'IR', {582 397 290 22 246 366 403 103 197}, 'window', 2);
 
 for p = 1:size(params, 2)
 
@@ -44,13 +44,13 @@ for p = 1:size(params, 2)
         replication_state_filtered{Chr}(:, is_included_chr(Chr, :))', ...
         'AlphaData', ~isnan(replication_state_filtered{Chr}(:, is_included_chr(Chr, :))'), ...
         'Parent', top)
-    set(top, 'YDir', 'reverse', 'XLim', X, 'YLim', [1 num_cells], 'CLim', [2 4], ...
+    set(top, 'YDir', 'reverse', 'XLim', X, 'YLim', [0.5 num_cells+0.5], 'CLim', [2 4], ...
         'XTick', [], 'YTick', Yticks(2:2:end), 'YTickLabel', YLabels(2:2:end), 'Box', 'off')
     ylabel(top, '% Rep.')
     colormap(top, sc_colormap)
     
     yyaxis(top, 'right')
-    set(top, 'YColor', 'k', 'YTick', [], 'YLim', [1 num_cells])
+    set(top, 'YColor', 'k', 'YTick', [], 'YLim', [0.5 num_cells+0.5])
     ylabel(top, [num2str(num_cells) '  cells'])
 
     set(panels.(params(p).panel).inset, 'XLim', X, 'YLim', [0 1], 'Visible', 'off')
@@ -63,7 +63,7 @@ for p = 1:size(params, 2)
 
     yyaxis(top, 'left')
     for t = 1:2
-        plot(X(t) * ones(1, 2), [1 num_cells], 'k-', 'LineWidth', 0.7, ...
+        plot(X(t) * ones(1, 2), [0.5 num_cells+0.5], 'k-', 'LineWidth', 0.7, ...
             'Parent', top)
     end
     
@@ -74,16 +74,16 @@ for p = 1:size(params, 2)
     imagesc(genome_windows{Chr}(:,3)./1e6, 1:length(barcodes_shown), ...
         replication_state_masked{Chr}(:, barcodes_shown)', ...
         'AlphaData', ~isnan(replication_state_masked{Chr}(:, barcodes_shown)'), 'Parent', bottom)
-    set(bottom, 'YDir', 'reverse', 'XLim', X, 'YLim', [1 length(barcodes_shown)], 'YTick', [], ...
+    set(bottom, 'YDir', 'reverse', 'XLim', X, 'YLim', [0.5 length(barcodes_shown)+0.5], 'YTick', [], ...
         'Box', 'off')
     colormap(bottom, sc_colormap)
     xlabel(bottom, ['Chr' num2str(Chr) ', Mb'])
     ylabel(bottom, [num2str(length(barcodes_shown)) ' cells'])
     
-    plot(single_cell_IRs{Chr}(params(p).IR, 4) ./ 1e6 * ones(1, 2), [1 num_cells], ...
+    plot(single_cell_IRs{Chr}(params(p).IR, 4) ./ 1e6 * ones(1, 2), [0.5 num_cells+0.5], ...
             'k--', 'LineWidth', 0.7, 'Parent', top)
     for l = 5:6
-        plot(single_cell_IRs{Chr}(params(p).IR, l) ./ 1e6 * ones(1, 2), [1 num_cells], ...
+        plot(single_cell_IRs{Chr}(params(p).IR, l) ./ 1e6 * ones(1, 2), [0.5 num_cells+0.5], ...
             'k--', 'LineWidth', 0.7, 'Parent', bottom) 
     end
 
@@ -104,5 +104,6 @@ for p = 1:size(params, 2)
     
 end
 
-printFigure('out/FigureS2.pdf')
+printFigure('out/FigureS5.pdf')
 close
+clearvars

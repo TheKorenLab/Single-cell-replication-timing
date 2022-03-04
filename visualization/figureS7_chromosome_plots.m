@@ -13,8 +13,8 @@ end
 
 %% Figure skeleton
 
-figureS4 = figure;
-set(figureS4, 'Position', [25 9 6.5 8.7])
+figureS7 = figure;
+set(figureS7, 'Units', 'inches', 'Position', [25 9 6.5 8.7])
 
 x = [0.45 3.75];
 
@@ -36,11 +36,8 @@ end
 %% Plot
 
 params = struct('Chr', 2, 'X', [100 150], 'panel', panel_names, 'sample', {2 3 4 5 6 7 8 9}, ...
-    'title', samples(2:9), 'color', {s_light{1} s_light{1} s_light{2} s_light{2} s_light{2} ...
+    'color', {s_light{1} s_light{1} s_light{2} s_light{2} s_light{2} ...
     s_light{3} s_light{3} s_light{3}});
-
-params(6).title = 'HCT-116';
-params(8).title = 'MCF-7';
 
 for p = 1:size(params, 2)
     
@@ -60,7 +57,7 @@ for p = 1:size(params, 2)
         'Color', params(p).color, 'Parent', top)
     set(top, 'XLim', params(p).X, 'XTick', [], 'YTick', [-2 0 2])
     ylabel(top, 'RT')
-    title(top, params(p).title)
+    title(top, cell_line_names{params(p).sample})
     
     yyaxis(top, 'right')
     set(top, 'YColor', 'k', 'YTick', [])
@@ -73,7 +70,7 @@ for p = 1:size(params, 2)
     r = replication_state_filtered{Chr}(:, index);
     imagesc(genome_windows{Chr}(:, 3) ./1e6, 1:num_cells, r', 'AlphaData', ~isnan(r'), ...
         'Parent', bottom)
-    set(bottom, 'YDir', 'reverse', 'XLim', params(p).X, 'YLim', [1 num_cells], ...
+    set(bottom, 'YDir', 'reverse', 'XLim', params(p).X, 'YLim', [0.5 num_cells+0.5], ...
         'CLim', [2 4], 'YTick', Yticks(2:2:end), 'YTickLabel', YLabels(2:2:end), 'Box', 'off')
     colormap(bottom, [convert_hex(g1_light); convert_hex(params(p).color)])
     xlabel(bottom, ['Chromosome ' num2str(Chr) ' Coordinate, Mb'])
@@ -89,5 +86,6 @@ for p = 1:size(params, 2)
     
 end
 
-printFigure('out/FigureS4.pdf')
+printFigure('out/FigureS7.pdf')
 close
+clearvars

@@ -75,7 +75,8 @@ end
 clearvars Chr coverage_20kb f index input_files is_G1_all is_mappable_200kb ...
     mean_coverage_1Mb next_library replication_state scaled_mapd_1Mb
 
-load('data/processed/GM12878.mat', 'aggregate_G1_fraction')
+load('data/processed/GM12878.mat', 'aggregate_G1_fraction', 'barcodes', 'is_included_chr', ...
+    'percent_replicated_filtered', 'replication_state_filtered')
 load('data/processed/reference_bulk_profiles.mat', 'ref')
 
 profiles = cell(22, 1);
@@ -90,6 +91,16 @@ end
 profiles = cell2mat(profiles);
 r_bulk = corr(profiles(:, 1), profiles(:, 2), 'rows', 'pairwise');
 
+% G1 contamination histogram
+
+bins = 0:5:100;
+contamination_x = [bins(1:end-1); bins(2:end)];
+contamination_x = mean(contamination_x, 1);
+
+contamination_y = histcounts(percent_replicated_filtered(barcodes(:, 1) == 1) * 100, ...
+    bins);
+contamination_y = contamination_y ./ sum(contamination_y) .* 100;
+
 %% Figure
 fraction_colors = {'#005A32' '#78C679' '#41AB5D' '#238443' '#005A32'};
 cell_colors = {'#E41A1C', '#377EB8', '#984EA3', '#FF7F00'};
@@ -102,27 +113,37 @@ barcodes_shown = [963 756 2328 3514];
 fractions_highlighted = {'G1' 'S'};
 
 figureS1 = figure;
-set(figureS1, 'Position', [25 9 6.5 7])
+set(figureS1, 'Units', 'inches', 'Position', [25 9 6.5 8.5])
 
-panelA = struct('G1', axes('Units', 'inches', 'Position', [0.5 5.684 1 1]), ...
-    'earlyS', axes('Units', 'inches', 'Position', [1.6875 5.684 1 1]), ...
-    'S', axes('Units', 'inches', 'Position', [2.875 5.684 1 1]), ...
-    'lateS', axes('Units', 'inches', 'Position', [4.0625 5.684 1 1]), ...
-    'G2', axes('Units', 'inches', 'Position', [5.25 5.684 1 1]));
+x = linspace(0.5, 5.25, 5);
+y = 7.2118;
+panelA = struct('G1', axes('Units', 'inches', 'Position', [x(1) y 1 1]), ...
+    'earlyS', axes('Units', 'inches', 'Position', [x(2) y 1 1]), ...
+    'S', axes('Units', 'inches', 'Position', [x(3) y 1 1]), ...
+    'lateS', axes('Units', 'inches', 'Position', [x(4) y 1 1]), ...
+    'G2', axes('Units', 'inches', 'Position', [x(5) y 1 1]));
 
-panelB = struct('left', axes('Units', 'inches', 'Position', [0.5 3.814 1 1]), ...
-    'middle_top', axes('Units', 'inches', 'Position', [2 4.249 1.8 0.45]), ...
-    'middle_bottom', axes('Units', 'inches', 'Position', [2 3.929 1.8 0.27]), ...
-    'right_top', axes('Units', 'inches', 'Position', [4.45 4.249 1.8 0.45]), ...
-    'right_bottom', axes('Units', 'inches', 'Position', [4.45 3.929 1.8 0.27]));
+x = [0.5 2 4.45];
+y = 5.4807;
+panelB = struct('left', axes('Units', 'inches', 'Position', [x(1) y 1 1]), ...
+    'middle_top', axes('Units', 'inches', 'Position', [x(2) y+0.511 1.8 0.45]), ...
+    'middle_bottom', axes('Units', 'inches', 'Position', [x(2) y+0.115 1.8 0.27]), ...
+    'right_top', axes('Units', 'inches', 'Position', [x(3) y+0.511 1.8 0.45]), ...
+    'right_bottom', axes('Units', 'inches', 'Position', [x(3) y+0.115 1.8 0.27]));
 
-panelC = struct('left', axes('Units', 'inches', 'Position', [0.5 1.944 1 1]), ...
-    'middle_top', axes('Units', 'inches', 'Position', [2 2.379 1.8 0.45]), ...
-    'middle_bottom', axes('Units', 'inches', 'Position', [2 2.059 1.8 0.27]), ...
-    'right_top', axes('Units', 'inches', 'Position', [4.45 2.379 1.8 0.45]), ...
-    'right_bottom', axes('Units', 'inches', 'Position', [4.45 2.059 1.8 0.27]));
+y = 3.7634;
+panelC = struct('left', axes('Units', 'inches', 'Position', [x(1) y 1 1]), ...
+    'middle_top', axes('Units', 'inches', 'Position', [x(2) y+0.511 1.8 0.45]), ...
+    'middle_bottom', axes('Units', 'inches', 'Position', [x(2) y+0.115 1.8 0.27]), ...
+    'right_top', axes('Units', 'inches', 'Position', [x(3) y+0.511 1.8 0.45]), ...
+    'right_bottom', axes('Units', 'inches', 'Position', [x(3) y+0.115 1.8 0.27]));
 
-panelD = axes('Units', 'inches', 'Position', [0.5 0.4283 5.75 0.8]);
+panelD = axes('Units', 'inches', 'Position', [0.5 2.2617 5.75 0.8]);
+
+panelE = axes('Units', 'inches', 'Position', [0.5 0.4478 1 1]);
+
+panelF = struct('top', axes('Units', 'inches', 'Position', [2.4 1.0389 3.8 0.62]), ...
+    'bottom', axes('Units', 'inches', 'Position', [2.4 0.3489 3.8 0.62]));
 
 %% Read depth vs. MAPD (Panel A, Panel B/C left)
 
@@ -155,7 +176,7 @@ for p = 1:7
             'MarkerEdgeColor', convert_hex(fraction_colors{p}), ...
             'MarkerFaceAlpha', 1, 'MarkerEdgeAlpha', 1, 'Parent', parent)
         text(208, 3.285, [num2str(percent_S(p), '%0.1f') '% of cells'  ...
-            newline 'replicating'], 'FontSize', 9, 'HorizontalAlignment', 'center', 'Parent', parent)
+            newline 'replicating'], 'FontSize', 7, 'HorizontalAlignment', 'center', 'Parent', parent)
     else
         is_highlighted = barcodes_shown(is_in_fraction(barcodes_shown));
         for b = 1:length(is_highlighted)
@@ -185,7 +206,7 @@ for b = 1:4
     
     top = p.([panels{b} '_top']);
     ymax = prctile(example_cells.raw{Chr}(:, b), 99.95) + 10;
-    set(top, 'XTick', [], 'XLim', X, 'YLim', [0 ymax], 'YTick', [])
+    set(top, 'XTick', [], 'XLim', X, 'YLim', [0 ymax], 'YTick', 0:20:60)
     plot(genome_windows{Chr}(1:10:end, 3) ./ 1e6, ...
         example_cells.raw{Chr}(:, b), '.', ...
         'MarkerSize', 2, 'Color', cell_colors{b}, 'Parent', top)
@@ -201,6 +222,8 @@ for b = 1:4
     
 end
 
+set(panelB.middle_top, 'YTick', 0:30:90)
+
 %% Panel D
 
 set(panelD, 'XLim', X, 'YLim', [-2.5 4], 'YTick', [-2 0 2])
@@ -212,28 +235,83 @@ plot(ref.GM12878{Chr}(:, 1) ./ 1e6, ref.GM12878{Chr}(:, 2), '.', 'Color', 'k', .
 plot(aggregate_G1_fraction{Chr}(:, 1) ./ 1e6, aggregate_G1_fraction{Chr}(:, 2), '.', ...
     'Color', s_light{1}, 'MarkerSize', 4, 'HandleVisibility', 'off', 'Parent', panelD)
 xlabel(panelD, ['Chromosome ' num2str(Chr) ' Coordinate, Mb'])
-ylabel(panelD, 'Rep. Timing')
+ylabel(panelD, 'RT')
 title(panelD, 'S-phase Cells in the G1 Fraction')
  
 legendD = legend(panelD);
-set(legendD, 'Orientation', 'horizontal', 'FontSize', 9, 'Position', [0.0823 0.1468 0.4241 0.0288])
+set(legendD, 'Orientation', 'horizontal', 'Position', [0.0823 0.3362 0.3536 0.0196])
 legendD.ItemTokenSize(1) = 15;
 
 yyaxis(panelD, 'right')
 set(panelD, 'YColor', 'k', 'YTick', [])
 ylabel(panelD, ['r = ' num2str(r_bulk, '%0.2f')])
 
+%% Panel E
+
+bar(contamination_x, contamination_y, 1, 'FaceColor', '#BDBDBD', 'EdgeColor', '#636363', ...
+    'Parent', panelE);
+set(panelE, 'XLim', [-0.5 40.5], 'YLim', [0 50])
+xlabel(panelE, '% Replicated')
+ylabel(panelE, '% of Cells')
+title(panelE, 'G1 Fraction')
+
+%% Panel F
+
+params = struct('panel', {panelF.top panelF.bottom}, 'fraction', {1 3}, 'title', {'G1' 'S'});
+
+for p = 1:2
+    
+    is_fraction = barcodes(:, 1) == params(p).fraction;
+    index = is_included_chr(Chr, :) & is_fraction';
+    num_cells = sum(index);
+    [Yticks, YLabels] = get_heatmap_yticks(percent_replicated_filtered(index), [5 10 15]);
+
+    if p == 1
+        ymax = num_cells;
+    else
+        ymax = sum(percent_replicated_filtered(index) <= 0.15);
+    end
+    
+    parent = params(p).panel;
+    
+    r = replication_state_filtered{Chr}(:, index);
+    imagesc(genome_windows{Chr}(:, 3)./1e6, 1:num_cells, r', 'AlphaData', ~isnan(r'), ...
+        'Parent', parent);
+    set(parent, 'YDir', 'reverse', 'XLim', X, 'YLim', [0.5 ymax+0.5], 'CLim', [2 4], ...
+        'YTick', Yticks, 'YTickLabel', YLabels, 'Box', 'off')
+    
+    if p == 1
+        set(parent, 'XTick', [])
+    else
+        xlabel(parent, ['Chromosome ' num2str(Chr) ' Coordinate, Mb'], 'BackgroundColor', 'white')
+    end
+    
+    ylabel(parent, '% Rep.')
+    colormap(parent, [convert_hex(g1_light); convert_hex(s_light{1})])
+    yyaxis(parent, 'right')
+    set(parent, 'YColor', 'k', 'YTick', [])
+    ylabel(parent, params(p).title)
+
+end
+
+
 %% Annotate panels
 
-params = struct('panel', {panelA.G1 panelB.left panelC.left panelD}, ...
-    'text', {'a', 'b', 'c', 'd'}, 'x', -0.375, 'y', 1.1806);
+params = struct('panel', {panelA.G1 panelB.left panelC.left panelD panelE panelF.top}, ...
+    'text', {'a', 'b', 'c', 'd', 'e', 'f'}, 'x', -0.375, 'y', 1.1806);
+
 params(4).x = -0.0628;
 params(4).y = 1.2435;
 
-for p = 1:4
+params(6).x = -0.13;
+params(6).y = 1.0907;
+
+for p = 1:6
     text(params(p).x, params(p).y, params(p).text, 'Parent', params(p).panel, ...
-        'FontSize', 14, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
+        'FontSize', 10, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
 end
 
 printFigure('out/FigureS1.pdf')
 close
+clearvars
+

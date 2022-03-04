@@ -12,8 +12,7 @@ end
 
 % Load single cell data
 data = struct;
-for sample = 1:9
-    data.(samples{sample}) = load(['data/processed/' samples{sample} '.mat'], 'aggregate_S_G1');
+for sample = 1:10
     
     input_files = {file_list(strcmp({file_list.sample}, samples{sample})).prefix};
     
@@ -57,8 +56,8 @@ clearvars cancer_bulk Chr coverage_20kb ESC_consensus hdf_file index is_mappable
 
 %% Figure skeleton
 
-figureS4 = figure;
-set(figureS4, 'Position', [25 9 6.5 5.85])
+figureS6 = figure;
+set(figureS6, 'Units', 'inches', 'Position', [25 9 6.5 5.85])
 
 x = linspace(0.45, 5.4, 5);
 y = [4.51 2.84];
@@ -68,7 +67,7 @@ for yi = 1:2
     for xi = 1:5
         s = s + 1;
        
-        if s > 9
+        if s > 10
             continue
         end
         
@@ -83,7 +82,7 @@ panelB = struct('top', axes('Units', 'inches', 'Position', [0.45 0.99 5.8 0.75])
 
 params = struct('color', {g1_dark s_dark}, 'labels', {'G1', 'S'}, 'alpha', {1 0.5});
 
-for p = 1:9
+for p = 1:10
     
     parent = panelA.(samples{p});
     
@@ -108,11 +107,8 @@ for p = 1:9
         ylabel(parent, 'Scaled MAPD')
     end
     
-    title(parent, samples{p})
+    title(parent, cell_line_names{p})
 end
-
-title(panelA.HCT116, 'HCT-116')
-title(panelA.MCF7, 'MCF-7')
 
 % Legend
 legend_markers = cell(2, 1);
@@ -124,7 +120,7 @@ set(legend_markers{2}, 'MarkerFaceColor', s_dark, 'DisplayName', 'S')
 
 legendA = legend(panelA.GM12878);
 legendA.ItemTokenSize(1) = 5;
-set(legendA, 'FontSize', 9, 'Units', 'inches', 'Position', [5.7021 3.1079 0.3958 0.3542])
+set(legendA, 'Orientation', 'horizontal', 'Units', 'inches', 'Position', [3.08 5.6148 0.65 0.1667])
 
 %% Panel B
 
@@ -140,18 +136,20 @@ for p = 1:2
     d = 2 .* d ./ nanmedian(d);
     
     plot(params(p).windows{params(p).Chr}(:, 3) ./ 1e6, d, '.', 'Color', s_light{3}, ...
-        'Parent', parent)
+        'MarkerSize', 3, 'Parent', parent)
     
     X = [genome_windows{params(p).Chr}(1, 1) genome_windows{params(p).Chr}(end, 2)]./1e6;
     set(parent, 'XLim', X)
-    yh = ylabel(parent, 'CN');
-    yh.Position(1) = -11;
+    ylabel(parent, 'CN');
     
     if p == 1
         set(parent, 'XTick', [], 'YTick', [2 10 20])
     else
-        set(parent, 'YLim', [1 3])
+        set(parent, 'YLim', [0.75 3.25])
     end
+    
+    yh = get(parent,'YLabel');
+    yh.Position(1) = -10;
     
     yyaxis(parent, 'right')
     set(parent, 'YColor', 'k', 'YTick', [])
@@ -169,8 +167,9 @@ params = struct('panel', {panelA.GM12878 panelB.top}, 'text', {'a', 'b'}, 'X', {
 
 for p = 1:2
     text(params(p).X, params(p).Y, params(p).text, 'Parent', params(p).panel, ...
-        'FontSize', 14, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
+        'FontSize', 10, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
 end
 
-printFigure('out/FigureS3.pdf')
+printFigure('out/FigureS6.pdf')
 close
+clearvars

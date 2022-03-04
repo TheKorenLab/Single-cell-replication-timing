@@ -1,8 +1,8 @@
 load_single_cell_project
 
 data = struct;
-all_widths = cell(9, 1);
-for sample = 1:9
+all_widths = cell(10, 1);
+for sample = 1:10
     
     filename = ['data/processed/' samples{sample} '.mat'];
     load(filename, 'single_cell_IRs', 'firing_order_frequency', 'IR_range', ...
@@ -49,39 +49,35 @@ all_widths = cell2mat(all_widths);
 IR_width_x = [IR_width_bins(1:end-1); IR_width_bins(2:end)];
 IR_width_x = mean(IR_width_x, 1);
 
-clearvars -except data samples IR_width_bins IR_width_x
-
-sample_names = samples(1:9);
-sample_names{7} = 'HCT-116';
-sample_names{9} = 'MCF-7';
+clearvars -except data samples IR_width_bins IR_width_x cell_line_names
 
 bar_colors = {'#DE2C26', '#3182BD', '#636362', '#BDBDBD'};
 range_colors = interp1([0 100], [215 48 39; 145 191 219]./255, linspace(0, 100, 128), 'pchip');
 pie_colors = {'#66C2A5'; '#E78AC3'; '#8DA0CB'; '#FC8D62'};
 
-%% Figure S6
+%% Figure S10
 
-figureS6 = figure;
-set(figureS6, 'Position', [25 9 6.5 9])
+figureS10 = figure;
+set(figureS10, 'Units', 'inches', 'Position', [25 9 6.5 9])
 
 % Figure skeleton
-panel_names = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
+panel_names = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'};
 
 panels = struct;
-params = struct('panel', {1 2 3}, 'y', {8.01 4.915 1.8}, ...
-    'height', {0.64 0.9 0.66}, 'width', {0.85 1.12 1.1});
+params = struct('panel', {1 2 3}, 'y', {7.78 4.4 1.5778}, ...
+    'height', {0.93 0.9 0.66}, 'width', {0.93 1.12 1.1});
 
 for p = 1:3
     
     x = linspace(0.45, 6.4-params(p).width, 5);
-    y = [params(p).y params(p).y-params(p).height-0.7];
+    y = [params(p).y params(p).y-params(p).height-0.6];
     
     counter = 0;
     for yi = 1:length(y)
         for xi = 1:length(x)
             counter = counter + 1;
             
-            if counter > 9
+            if counter > 10
                 continue
             end
             
@@ -94,7 +90,7 @@ end
 
 % Plot data
 
-for sample = 1:9
+for sample = 1:10
     
     s = data.(samples{sample});
     
@@ -103,17 +99,18 @@ for sample = 1:9
     
     counts = histcounts(s.IR_widths / 1e3, IR_width_bins);
     counts = counts ./ sum(counts) .* 100;
-    
+    ymax = max(counts)+5;
+
     bar(IR_width_x, counts, 1, 'FaceColor', '#BDBDBD', 'EdgeColor', '#636363', 'Parent', parent);
     axis(parent, 'tight')
-    set(parent, 'XLim', [20 500], 'YLim', [0 55])
+    set(parent, 'XLim', [20 500], 'YLim', [0 ymax])
     xlabel(parent, 'IR width, kb')
-    title(parent, sample_names{sample})
+    title(parent, cell_line_names{sample})
     
-    text(325, 44.5, 'Median:', 'Parent', parent, 'FontSize', 9, 'FontName', 'Arial', ...
+    text(325, 0.9 * ymax, 'Median:', 'Parent', parent, 'FontSize', 7, 'FontName', 'Arial', ...
         'HorizontalAlignment', 'center');
-    text(325, 30.75, [num2str(s.mu_width/1e3, '%0.2f') 'kb'], ...
-        'Parent', parent, 'FontSize', 9, 'FontName', 'Arial', 'HorizontalAlignment', 'center');
+    text(325, 0.78 * ymax, [num2str(s.mu_width/1e3, '%0.1f') 'kb'], ...
+        'Parent', parent, 'FontSize', 7, 'FontName', 'Arial', 'HorizontalAlignment', 'center');
     
     if ismember(sample, [1 6])
         ylabel(parent, '% of IRs')
@@ -130,7 +127,7 @@ for sample = 1:9
     set(parent, 'XLim', [1 size(s.firing_order_frequency, 1)], 'YLim', [0 100], ...
         'YTick', [0 25 75], 'XTick', s.XTicks, 'XTickLabel', [1.25 0 -1.25])
     xlabel(parent, 'Aggregate RT')
-    title(parent, sample_names{sample})
+    title(parent, cell_line_names{sample})
     
     if ismember(sample, [1 6])
         ylabel(parent, '% of IRs')
@@ -146,7 +143,7 @@ for sample = 1:9
         'Color', '#BDBDBD', 'Parent', parent)
     set(parent, 'XLim', [-2 2], 'XTick', [-1.25 0 1.25], 'YLim', [0 40], 'XDir', 'reverse')
     xlabel(parent, 'Aggregate RT')
-    title(parent, sample_names{sample})
+    title(parent, cell_line_names{sample})
     
     if ismember(sample, [1 6])
         ylabel(parent, '% of IRs')
@@ -156,61 +153,59 @@ for sample = 1:9
     
 end
 
-legendB = legend(panels(2).a, b([4 3 2 1]), {'On Time', 'Yet to Fire', 'Delayed', 'Premature'});
-set(legendB,'FontSize', 9, 'Units', 'inches', 'Position', [5.4 3.435 0.88 0.66])
+legendB = legend(panels(2).j, b([4 3 2 1]), {'Fired as predicted', 'Unfired as predicted', ...
+    'Delayed firing', 'Premature firing'});
 legendB.ItemTokenSize(1) = 10;
+pos = get(panels(2).a, 'Position');
+set(legendB, 'Units', 'inches', 'Orientation', 'horizontal', ...
+    'Position', [pos(1)+0.3 pos(2)+pos(4)+0.25 3.5278 0.2014])
 
 % Annotate panels
 params = struct('text', {'a', 'b', 'c'}, 'x', {-0.3607 -0.2862 -0.3101}, ...
-    'y', {1.2796 1.2021 1.2796});
+    'y', {1.1453 1.2021 1.2796});
 
 for p = 1:size(params, 2)
     text(params(p).x, params(p).y, params(p).text, 'Parent', panels(p).a, ...
-        'FontSize', 14, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
+        'FontSize', 10, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
 end
 
-printFigure('out/FigureS6.pdf')
+printFigure('out/FigureS10.pdf')
 close
 
-clearvars -except range_colors pie_colors data samples sample_names
+clearvars -except range_colors pie_colors data samples cell_line_names
 
-%% Figure S7
+%% Figure S11
 
-figureS7 = figure;
-set(figureS7, 'Position', [25 9 6.5 9])
+figureS11 = figure;
+set(figureS11, 'Units', 'centimeters', 'Position', [63.5 22.86 18 22.86])
 
 % Figure skeleton
-panel_names = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
+panel_names = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'};
 
-panels = struct;
-params = struct('panel', {1 2 3}, 'x', {[0.45 4.48] [0.45 2.3168] [3.54 5.6139]}, ...
-    'y', {[7.5306 4.3584] [2.5 0.44] [2.375, 0.0644]}, ...
-    'height', {1.1 0.61 0.78}, 'width', {1.92 0.72 0.78});
+params = struct('x', {0.92 linspace(9, 15.9, 4) linspace(8.3, 15.55, 4)}, ...
+    'y', {linspace(20.6728, 0.8128, 10) linspace(20.55, 13.9, 3) linspace(9, 2, 3)});
 
-for p = 1:3
-    
-    x = linspace(params(p).x(1), params(p).x(2), 3);
-    y = linspace(params(p).y(1), params(p).y(2), 3);
-    
-    counter = 0;
-    for yi = 1:length(y)
-        for xi = 1:length(x)
-            counter = counter + 1;
-            
-            if counter > 9
-                continue
-            end
-            
-            panels(p).(panel_names{counter}) = axes('Units', 'inches', ...
-                'Position', [x(xi) y(yi) params(p).width params(p).height]);
+pos = cell(3, 1);
+for p = 2:3
+    pos{p} = cell(3, 3);
+    for xi = 1:3
+        for yi = 1:3
+            pos{p}{xi, yi} = [params(p).x(xi) params(p).y(yi)];
         end
     end
-    
+    pos{p} = cell2mat(pos{p}(:));
+    pos{p}(10, :) = [params(p).x(4) params(p).y(1)];
+end
+
+for s = 1:10
+    panels(1).(panel_names{s}) = axes('Position', [params(1).x params(1).y(s) 6.48 1.75]);
+    panels(2).(panel_names{s}) = axes('Position', [pos{2}(s, :) 1.9 1.8]);
+    panels(3).(panel_names{s}) = axes('Position', [pos{3}(s, :) 2.25 2.25]);
 end
 
 % Plot data
 
-for sample = 1:9
+for sample = 1:10
     
     s = data.(samples{sample});
     
@@ -219,28 +214,31 @@ for sample = 1:9
     parent = panels(1).(panel_names{sample});
     
     index = logical(s.IR_range(:, 5));
+    
+    if sample == 10
+        randindex = find(index);
+        rng(1514)
+        randindex = randsample(randindex, round(0.75 * sum(index)), false);
+        index(randindex) = false;
+    end
+    
     c = interp1(linspace(0, 100, 128), range_colors, s.IR_range(:, 4));
+    
     
     for o = 1:size(s.IR_range, 1)
         if ~index(o)
             continue
         end
-        plot(o * ones(1, 2), s.IR_range(o, 2:3), 'Color', c(o, :), 'LineWidth', 0.6, ...
+        plot(o * ones(1, 2), s.IR_range(o, 2:3), 'Color', c(o, :), 'LineWidth', 0.3, ...
             'Parent', parent)
     end
     set(parent, 'YDir', 'reverse', 'XLim', [1 size(s.IR_range, 1)] + [-5 5], 'CLim', [0 100], ...
         'XTick', s.XTicks, 'XTickLabel', flip(-1.5:0.5:1), 'YTick', 20:20:90)
-    title(parent, sample_names{sample})
     
-    if ismember(sample, [1 4 7])
-        ylabel(parent, '% Replicated')
-    else
-        set(parent, 'YTick', [])
-    end
-    
-    if sample >= 7
-        xlabel(parent, 'Aggregate RT')
-    end
+    ylabel(parent, '% Replicated')
+    yyaxis(parent, 'right')
+    set(parent, 'YColor', 'k', 'YTick', [])
+    ylabel(parent, cell_line_names{sample})
     
     % Cumulative early timing
     
@@ -249,16 +247,13 @@ for sample = 1:9
     plot(s.cumulative_earliest_timing(:, 1) * 100, s.cumulative_earliest_timing(:, 2) * 100, ...
         '.', 'MarkerSize', 4, 'Color', 'k', 'Parent', parent)
     set(parent, 'XLim', [5 75], 'XTick', [25 50], 'YLim', [0 105], 'YTick', [25 75])
-    title(parent, sample_names{sample})
+    title(parent, cell_line_names{sample})
+    xlabel(parent, 'Earliest Time')
     
     if ismember(sample, [1 4 7])
         ylabel(parent, '% IRs')
     else
         set(parent, 'YTick', [])
-    end
-    
-    if sample >= 7
-        xlabel(parent, 'Earliest Time')
     end
     
     % IR class pie chart
@@ -285,7 +280,7 @@ for sample = 1:9
         end
     end
     
-    set(t, 'FontSize', 7.5, 'FontName', 'Arial', 'HorizontalAlignment', 'center', ...
+    set(t, 'FontSize', 7, 'FontName', 'Arial', 'HorizontalAlignment', 'center', ...
         'VerticalAlignment', 'middle')
     t_pos = cell2mat(get(t,'Position'));
     set(t, {'Position'}, num2cell(t_pos * 0.68, 2))
@@ -293,25 +288,27 @@ for sample = 1:9
     c = findobj(p, 'Type', 'patch');
     set(c, {'FaceColor'}, colors, 'LineWidth', 0.6)
     
-    title(parent, sample_names{sample})
+    title(parent, cell_line_names{sample})
     
 end
 
+xlabel(panels(1).j, 'Aggregate RT')
+
 legendC = legend(panels(3).a, {'Early in aggregate', 'Throughout S', 'Early + Rare', ...
     'Constitutively Late'});
-set(legendC, 'FontSize', 9, 'Units', 'inches', 'Position', [3.7235 3.4306 2.6319 0.4045], ...
-    'NumColumns', 2)
 legendC.ItemTokenSize(1) = 10;
-
+set(legendC, 'Orientation', 'horizontal', 'NumColumns', 2, 'Units', 'centimeters', ...
+    'Position', [10.28 0.52 5.521 0.7232])
 
 % Annotate panels
-params = struct('text', {'a', 'b', 'c'}, 'x', {-0.1232 -0.4466 -0.1964}, ...
-    'y', {1.1509 1.4773 1.3571});
+params = struct('text', {'a', 'b', 'c'}, 'x', {-0.1232 -0.3704 0.0241}, ...
+    'y', {1.1509 1.1373 1.3571});
 
 for p = 1:size(params, 2)
-    text(params(p).x, params(p).y, params(p).text, 'Parent', panels(p).a, ...
-        'FontSize', 14, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
+   text(params(p).x, params(p).y, params(p).text, 'Parent', panels(p).a, ...
+        'FontSize', 10, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
 end
 
-printFigure('out/FigureS7.pdf')
+printFigure('out/FigureS11.pdf')
 close
+clearvars

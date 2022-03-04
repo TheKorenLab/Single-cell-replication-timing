@@ -1,8 +1,12 @@
-function [y_ticks, ylabels] = get_heatmap_yticks(percent_replicated)
+function [y_ticks, ylabels] = get_heatmap_yticks(percent_replicated, varargin)
 
     percent_replicated = percent_replicated .* 100;
 
-    ylabels = 10:10:100;
+    if isempty(varargin)
+        ylabels = 10:10:100;
+    else
+        ylabels = varargin{1};
+    end
     
     y_ticks = NaN(length(ylabels), 1);
     for y = 1:length(ylabels) - 1

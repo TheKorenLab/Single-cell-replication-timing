@@ -12,37 +12,32 @@ GM18507 = load('data/processed/GM18507.mat', 'replication_state_filtered', ...
 
 %% Figure skeleton
 figure2 = figure;
-set(figure2, 'Position', [25 9 6.5 8.2])
+set(figure2, 'Position',  [63.5 22.86 18 21.2])
 
-panelA = struct('top', axes('Units', 'inches', 'Position', [0.45 7.1278 5.8 0.5]), ...
-'bottom', axes('Units', 'inches', 'Position', [0.45 5.5778 5.8 1.5]));
+panelA = struct('top', axes('Position', [0.92 18.75   16.58 1.5]), ...
+'bottom', axes('Position', [0.92 14.3 16.58 4.25], 'Box', 'off'));
 
-inset = axes('Units', 'inches', 'Position', [0.45 4.8 5.8 0.7778]);
+inset = axes('Position', [0.92 12.75 16.58 1.55], 'Visible', 'off');
 
-panelA1 = struct('top', axes('Units', 'inches', 'Position', [0.75 4.3 0.8 0.5]), ...
-    'bottom', axes('Units', 'inches', 'Position', [0.75 3 0.8 1.25]));
+panelA1 = struct('top', axes('Position', [2.1 11.25 2 1.5]), ...
+    'bottom', axes('Position', [2.1 7.25 2 3.8], 'Box', 'off'));
 
-panelA2 = struct('top', axes('Units', 'inches', 'Position', [2.75 4.3 3.5 0.5]), ...
-    'bottom', axes('Units', 'inches', 'Position', [2.75 3 3.5 1.25]));
+panelA2 = struct('top', axes('Position', [7  11.25 9.75 1.5]), ...
+    'bottom', axes('Position', [7 7.25 9.75 3.8], 'Box', 'off'));
 
-panelB = struct('top', axes('Units', 'inches', 'Position', [0.45 1.69 5.8 0.5]), ...
-    'bottom', axes('Units', 'inches', 'Position', [0.45 0.44 5.8 1.2]));
+panelB = struct('top', axes('Position', [0.92 4.2 16.58 1.5]), ...
+    'bottom', axes('Position', [0.92 0.75 16.58 3.25], 'Box', 'off'));
 
 %% Heatmaps
 
 Chr = 2;
 
-params = struct('panel', {panelA panelA1 panelA2 panelB}, 'Chr', 2, 'X', [100 235], ...
-    'sample', GM12878, 'title', '', 'inset', [NaN NaN], 'name', 'GM12878');
-
-params(1).title = 'GM12878, 10x Genomics';
-params(2).X = [125 130];
-params(2).inset = [107.1 125.5];
-params(3).X = [200 230];
-params(3).inset = [153.5 235];
-params(4).sample = GM18507;
-params(4).title = 'GM18507, DLP+';
-params(4).name = 'GM18507';
+params = struct('panel', {panelA panelA1 panelA2 panelB}, 'Chr', 2, ...
+    'X', {[100 235] [125 130] [200 230] [100 235]}, ...
+    'sample', {GM12878 GM12878 GM12878 GM18507}, ...
+    'title', {'GM12878, 10x Genomics' '' '' 'GM18507, DLP+'}, ...
+    'inset', {[NaN NaN] [109.5 125.9] [149.3 228.9], [NaN NaN]}, ...
+    'name', {'GM12878' 'GM12878' 'GM12878' 'GM18507'});
 
 for p = 1:4
     
@@ -71,9 +66,9 @@ for p = 1:4
     r = params(p).sample.replication_state_filtered{Chr}(:, params(p).sample.is_included_chr(Chr, :));
     imagesc(genome_windows{Chr}(:, 3)./1e6, 1:num_cells, r', 'AlphaData', ~isnan(r'), ...
         'Parent', bottom);
-    set(bottom, 'YDir', 'reverse', 'XLim', params(p).X, 'YLim', [1 num_cells], 'CLim', [2 4], ...
+    set(bottom, 'YDir', 'reverse', 'XLim', params(p).X, 'YLim', [0.5 num_cells+0.5], 'CLim', [2 4], ...
         'YTick', Yticks(2:2:end), 'YTickLabel', YLabels(2:2:end), 'Box', 'off')
-    xlabel(bottom, ['Chromosome ' num2str(Chr) ' Coordinate, Mb'], 'BackgroundColor', 'white')
+    xlabel(bottom, ['Chromosome ' num2str(Chr) ' Coordinate, Mb'])
     ylabel(bottom, '% Replicated')
     colormap(bottom, [convert_hex(g1_light); convert_hex(s_light{1})])
     yyaxis(bottom, 'right')
@@ -82,20 +77,28 @@ for p = 1:4
     
 end
 
-xlabel(panelA1.bottom, ['Chr. ' num2str(Chr) ', Mb'], 'BackgroundColor', 'white')
+xlabel(panelA1.bottom, ['Chr. ' num2str(Chr) ', Mb'])
+
+pos = get(panelA.bottom.XLabel, 'Position');
+pos(2) = pos(2) +75;
+set(panelA.bottom.XLabel, 'BackgroundColor', 'white', 'Position', pos)
 
 %% Legend for panel A
 
-plot(0, 0, 'Color', 'k', 'LineWidth', 2, 'DisplayName', 'Bulk-seq', 'Parent', panelA.top)
-plot(0, 0, 'Color', s_light{1}, 'LineWidth', 2, 'DisplayName', 'Single-Cell S/G1 Aggregate', ...
+plot(0, 0, 'Color', 'k', 'LineWidth', 2, 'LineStyle', '-', 'DisplayName', 'Bulk-seq', ...
     'Parent', panelA.top)
+plot(0, 0, 'Color', s_light{1}, 'LineWidth', 2, 'LineStyle', '-', ...
+    'DisplayName', 'Single-Cell S/G1 Aggregate', 'Parent', panelA.top)
 legendA = legend(panelA.top);
-set(legendA, 'Orientation', 'horizontal', 'FontSize', 9, 'Position', [0.0673 0.965 0.4241 0.02])
 legendA.ItemTokenSize(1) = 15;
+pos = get(panelA.top, 'Position');
+set(legendA, 'Units', 'centimeters', 'Orientation', 'horizontal', ...
+    'Position', [pos(1) pos(2)+pos(4)+0.1 5.8385 0.4233])
 
 colorbarA = colorbar(panelA.bottom);
-set(colorbarA, 'Orientation', 'horizontal', 'Position', [0.71 0.965 0.15 0.02],  ...
-    'Ticks', [2.5 3.5], 'TickLabels', [2 4], 'YAxisLocation', 'bottom')
+set(colorbarA, 'Orientation', 'horizontal', 'Ticks', [2.5 3.5], 'TickLabels', [2 4], ...
+    'YAxisLocation', 'top', 'Units', 'centimeters', ...
+    'Position', [pos(1)+pos(3)-2.6988 pos(2)+pos(4)+0.1 2.6988 0.4233])
 
 %% Connect insets
 
@@ -103,18 +106,18 @@ set(inset, 'XLim', params(1).X, 'YLim', [0 1], 'Visible', 'off')
 uistack(inset, 'bottom')
 
 for p = 2:3
-    plot(params(p).X(1) * ones(1, 2), [-2 2], 'k-', 'LineWidth', 0.7, 'HandleVisibility', 'off', ...
+    plot(params(p).X(1) * ones(1, 2), [-2 2], 'k-', 'LineWidth', 0.6, 'HandleVisibility', 'off', ...
         'Parent', panelA.top)
-    plot(params(p).X(2) * ones(1, 2), [-2 2], 'k-', 'LineWidth', 0.7, 'HandleVisibility', 'off', ...
+    plot(params(p).X(2) * ones(1, 2), [-2 2], 'k-', 'LineWidth', 0.6, 'HandleVisibility', 'off', ...
         'Parent', panelA.top)
 
-    plot(params(p).X(1) * ones(1, 2), [1 1998], 'k-', 'LineWidth', 0.7, 'HandleVisibility', 'off', ...
+    plot(params(p).X(1) * ones(1, 2), [0.5 2000], 'k-', 'LineWidth', 0.6, 'HandleVisibility', 'off', ...
         'Parent', panelA.bottom)
-    plot(params(p).X(2) * ones(1, 2), [1 1998], 'k-', 'LineWidth', 0.7, 'HandleVisibility', 'off', ...
+    plot(params(p).X(2) * ones(1, 2), [0.5 2000], 'k-', 'LineWidth', 0.6, 'HandleVisibility', 'off', ...
         'Parent', panelA.bottom)
     
-    plot([params(p).X(1) params(p).inset(1)], [1 0], 'k-', 'LineWidth', 0.7, 'Parent', inset)
-    plot([params(p).X(2) params(p).inset(2)], [1 0], 'k-', 'LineWidth', 0.7, 'Parent', inset)
+    plot([params(p).X(1) params(p).inset(1)], [1 0], 'k:', 'LineWidth', 0.6, 'Parent', inset);
+    plot([params(p).X(2) params(p).inset(2)], [1 0], 'k:', 'LineWidth', 0.6, 'Parent', inset);
 end
 
 %% Annotate panels
@@ -122,9 +125,10 @@ end
 params = struct('panel', {panelA.top panelB.top}, 'text', {'a', 'b'});
 
 for p = 1:2
-    text(-0.0503, 1.4167, params(p).text, 'Parent', params(p).panel, ...
-        'FontSize', 14, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
+    text(-0.0397, 1.0638, params(p).text, 'Parent', params(p).panel, ...
+        'FontSize', 10, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
 end
 
 printFigure('out/Figure2.pdf')
 close
+clearvars
