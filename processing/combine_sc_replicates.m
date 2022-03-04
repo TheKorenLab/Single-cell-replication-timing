@@ -64,7 +64,7 @@ for sample = 1:length(samples)
    
     % Filter by chromosome, using correlation
     num_cells_analyzed = size(barcodes, 1);
-    is_included_chr = false(22, num_cells_analyzed);
+    is_included_chr = true(22, num_cells_analyzed);
     
     r = cell(22, 1);
     parfor Chr = 1:22

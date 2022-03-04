@@ -10,7 +10,7 @@ function ratio = calculate_read_count_ratio(counts, states)
     non_nan_values(:, 2) = 1:length(non_nan_values);
     non_nan_values = non_nan_values(~isnan(non_nan_values(:, 1)), :);
     
-    if all(non_nan_values == 2) | all(non_nan_values == 4)
+    if all(non_nan_values == 2) || all(non_nan_values == 4)
         ratio = NaN;
         return
     end

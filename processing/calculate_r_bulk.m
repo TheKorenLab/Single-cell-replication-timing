@@ -1,14 +1,15 @@
 load_single_cell_project
+
 load('data/hg37_genome_metadata.mat', 'genome_windows')
-load('data/reference_bulk_profiles.mat', 'ref')
+load('data/processed/reference_bulk_profiles.mat', 'ref')
 
 data = struct;
-for sample = 1:10
+for sample = 1:11
     data.(samples{sample}) = load(['data/processed/' samples{sample} '.mat'], 'aggregate_S_G1');
 end
 
 r_bulk = struct;
-for sample = 1:10
+for sample = 1:11
 
     profiles = cell(22, 1);
     for Chr = 1:22

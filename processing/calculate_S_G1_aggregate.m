@@ -1,7 +1,7 @@
 function aggregate_S_G1 = calculate_S_G1_aggregate(input_files)
 
     warning('off', 'SPLINES:CHCKXYWP:NaNs')
-    load('data/hg37_genome_metadata.mat', 'contigs', 'chrom_size')
+    load('data/hg37_genome_metadata.mat', 'contigs')
 
     offset = NaN(length(input_files), 1);
     is_G1 = cell(1, length(input_files));
@@ -25,8 +25,16 @@ function aggregate_S_G1 = calculate_S_G1_aggregate(input_files)
         
         reads = cell(length(input_files), 1);
         for f = 1:length(input_files)
+            
+            chrom_names = h5info(['data/raw/' input_files{f} '.h5'], '/raw_counts/');
+            if any(contains({chrom_names.Datasets.Name},  'chr'))
+                input_str = 'chr';
+            else
+                input_str = '';
+            end
+            
             reads{f} = double(h5read(['data/raw/' input_files{f} '.h5'], ...
-            ['/reads/chr' num2str(Chr)]));
+            ['/reads/' input_str num2str(Chr)]));
             reads{f}(:, 1) = reads{f}(:, 1) + offset(f);
         end
         reads = cell2mat(reads);

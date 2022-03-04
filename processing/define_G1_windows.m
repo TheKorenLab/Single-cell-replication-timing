@@ -7,9 +7,16 @@ g1_windows = cell(22, 1);
 is_masked_window = cell(22, 1);
 raw_counts_20kb = cell(22, 1);
 
+chrom_names = h5info(hdf_file, '/raw_counts/');
+if any(contains({chrom_names.Datasets.Name},  'chr'))
+    input_str = 'chr';
+else
+    input_str = '';
+end
+
 for Chr = 1:22
     
-    reads = double(h5read(hdf_file, ['/reads/chr' num2str(Chr)]));
+    reads = double(h5read(hdf_file, ['/reads/' input_str num2str(Chr)]));
     reads = sortrows(reads, 2);
     reads(:, 1) = reads(:, 1) + 1;
     

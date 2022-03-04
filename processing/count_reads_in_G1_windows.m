@@ -2,9 +2,16 @@ function count_reads_in_G1_windows(hdf_file, sample_name)
 
     load('data/hg37_genome_metadata.mat', 'is_mappable')
 
+    chrom_names = h5info(hdf_file, '/raw_counts/');
+    if any(contains({chrom_names.Datasets.Name},  'chr'))
+        input_str = 'chr';
+    else
+        input_str = '';
+    end
+    
     coverage_20kb = cell(22, 1);
     for Chr = 1:22
-        coverage_20kb{Chr} = double(h5read(hdf_file, ['/raw_counts/chr' num2str(Chr)]));
+        coverage_20kb{Chr} = double(h5read(hdf_file, ['/raw_counts/' input_str num2str(Chr)]));
         coverage_20kb{Chr}(~is_mappable{Chr}, :) = NaN;
     end
     
