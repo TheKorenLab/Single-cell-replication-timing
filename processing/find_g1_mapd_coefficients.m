@@ -4,7 +4,9 @@ function g1_coefficients = find_g1_mapd_coefficients(mean_coverage, scaled_mapd)
     assert(length(scaled_mapd) == num_cells)
 
     % Initialize group assignments randomly
-    group = randi(2, [1 num_cells]);
+    group = ones(1, num_cells);
+    is_high_mapd = scaled_mapd >= pyPercentile(scaled_mapd, 10);
+    group(is_high_mapd) = 2;
     previous_assignments = ones(1, num_cells);
 
     % Fit two-component linear model
@@ -28,7 +30,12 @@ function g1_coefficients = find_g1_mapd_coefficients(mean_coverage, scaled_mapd)
 
     end
 
-    g1_coefficients = coefficients(coefficients(:, 2) == min(coefficients(:, 2)), :);
+    coefficients(:, 3) = NaN;
+    for c = 1:2
+        coefficients(c, 3) = polyval(coefficients(c, 1:2), max(mean_coverage));
+    end
+    
+    g1_coefficients = coefficients(coefficients(:, 3) == min(coefficients(:, 3)), 1:2);
 
     if isempty(g1_coefficients)
         error('G1 population was not detected successfully.')
