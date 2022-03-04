@@ -14,7 +14,7 @@ function [IR_range, cumulative_earliest_timing] = calculate_IR_range(single_cell
                 genome_windows{Chr}(:, 2) >= single_cell_IRs{Chr}(o, 4));
         end
 
-        % Find unreplicated tracks at overlap each IR
+        % Find unreplicated tracks that overlap each IR
         cn2_tracks = list_cn_segments(replication_state_filtered{Chr}, 2);
         overlapped_IRs = false(size(cn2_tracks, 1), length(IR_centers));
         for track = 1:size(cn2_tracks, 1)
