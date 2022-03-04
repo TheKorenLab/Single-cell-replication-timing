@@ -28,7 +28,7 @@ end
 % Combine replicating cells across replicates for the same cell line
 run('processing/combine_sc_replicates.m')
 
-% Calculate S/G1 aggregate profile (~2.5 hours)
+% Calculate S/G1 aggregate profile
 file_list = dir('data/intermediate/*.mat');
 for f = 1:size(file_list, 1)
     sample_name = strsplit(file_list(f).name, '-');
@@ -112,7 +112,13 @@ aggregate_G1_fraction = calculate_S_G1_aggregate({'GM12878-G1-library1-replicate
 save('-append', 'data/processed/GM12878.mat', 'aggregate_G1_fraction')
 
 % Cell line PCA
-run('analysis/run_cell_line_pca.mat')
+run('analysis/run_cell_line_PCA.m')
+
+% Assess HMM resolution
+run('analysis/assess_hmm_resolution.m')
+
+% Determine effect of cell number on IR count
+run('analysis/effect_of_n_on_IR_count.m')
 
 %% Visualization
 
@@ -122,9 +128,21 @@ run('visualization/figure3_calling_IRs.m')
 run('visualization/figure4_IR_variability.m')
 run('visualization/figure5_late_IR_behaviors.m')
 run('visualization/figure6_additional_cell_lines.m')
+
 run('visualization/figureS1_mapd_validation.m')
-run('visualization/figureS2_wide_IRs.m')
-run('visualization/figureS3_cell_line_QC.m')
-run('visualization/figureS4_chromosome_plots.m')
-run('visualization/figureS5_cell_line_specificity.m')
-run('visualization/figureS6_7_cell_line_variability.m')
+run('visualization/figureS2_distribution_of_read_counts.m')
+run('visualization/figureS3_HMM_simulated.m')
+run('visualization/figureS4_COLO829.m')
+run('visualization/figureS5_wide_IRs.m')
+run('visualization/figureS6_cell_line_QC.m')
+run('visualization/figureS7_chromosome_plots.m')
+run('visualization/figureS8_cell_line_specificity.m')
+run('visualization/figureS9_downsampling_GM12878.m')
+run('visualization/figureS10_S11_cell_line_variability.m')
+
+run('visualization/figureR1_updated_in_silico.m')
+run('visualization/figureR2_window_size_MAPD.m')
+run('visualization/figureR3_S_fraction_contamination.m')
+run('visualization/figureR4_filtered_cells.m')
+run('visualization/figureR5_IR_replication_timing.m')
+run('visualization/figureR6_constitutively_late_IRs.m')
