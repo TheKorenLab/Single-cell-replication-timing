@@ -1,6 +1,7 @@
+cd('~/Desktop/single_cell_manuscript/')
 load_single_cell_project
 
-load('data/processed/GM12878.mat', 'p_cells_fired', 'single_cell_IRs', ...
+load('data/processed3/GM12878.mat', 'p_cells_fired', 'single_cell_IRs', ...
     'replication_state_filtered', 'late_IR_class', 'aggregate_S_G1', 'percent_replicated_filtered', ...
     'is_included_chr', 'replication_tracks')
 load('data/hg37_genome_metadata.mat', 'genome_windows')
@@ -16,15 +17,15 @@ flat_classes = flat_classes(:, [3 2 1]);
 %% Figure skeleton
 
 figure5 = figure;
-set(figure5, 'Position', [63.5 22.86 18 21.59])
+set(figure5, 'Position', [63.5 22.86 18 18.5])
 
-panelA = struct('top', axes('Position', [0.92 19.558 11.3538 1.27]), ...
-    'bottom', axes('Position', [0.92 16.764 11.3538 2.667]));
+panelA = struct('top', axes('Position', [0.92 17.1 11.3538 1]), ...
+    'bottom', axes('Position', [0.92 14.6 11.3538 2.38]));
 
 panelB = struct('top_left', axes(), 'top_right', axes(), ...
     'bottom_left', axes(), 'bottom_right', axes());
 
-insetB = axes('Position', [0.92 14.3 16.58 2.464], 'Visible', 'off');
+insetB = axes('Position', [0.92 12.75 16.58 1.85], 'Visible', 'off');
 
 panelC = struct('top_left', axes(), 'top_right', axes(), ...
     'middle_left', axes(), 'middle_right', axes(), ...
@@ -36,12 +37,12 @@ panelD = struct('top', axes('Units', 'inches', 'Position', [5.7 4.46 0.7 1.2]), 
     'middle', axes('Units', 'inches', 'Position', [5.7 2.45 0.7 1.2]), ...
     'bottom', axes('Units', 'inches', 'Position', [5.7 0.44 0.7 1.2]));
 
-panelE = axes('Position', [14.35 17.8 2.65 2.65]);
+panelE = axes('Position', [14.6 15.5 2.33 2.33]);
 
 panelF = axes('Position', [0.92 0.82 5.33 3.1]);
 
 x = [0.92 4.25 8.21 11 15.5];
-y = linspace(11.2, 0.82, 3);
+y = linspace(9.65, 0.82, 3);
 
 pos = cell(5, 3);
 for xi = 1:5
@@ -155,6 +156,8 @@ for p = 1:size(params, 2)
     elseif late_IR_class{params(p).Chr}(params(p).IR_shown, 3)
         title(parent, 'Throughout S');
     end
+    
+    set(parent.Title, 'BackgroundColor', 'white')
     
     if ~isempty(params(p).inset)
         set(params(p).inset, 'YDir', 'reverse', 'XLim', [0 1], 'YLim', [0.5 num_cells+0.5], ...
@@ -279,7 +282,7 @@ title(panelE, 'IR class', 'Position', [0 1.35]);
 legendE = legend(panelE, {'Early in aggregate', 'Throughout S', 'Early + Rare', ...
     'Constitutively Late'});
 legendE.ItemTokenSize(1) = 15;
-set(legendE, 'Units', 'centimeters', 'Position', [14.23 15.9 3 1.32])
+set(legendE, 'Units', 'centimeters', 'Position', [14.54 13.64 3 1.32])
 
 %% Panel F
 
@@ -298,15 +301,15 @@ title(panelF, 'RT of IR Classes')
 
 params = struct('panel', {panelA.top panelB.top_left panelC.top_left panelD.top panelE panelF}, ...
     'text', {'a', 'b', 'c', 'd', 'e', 'f'}, ...
-    'x', {-0.0559 -0.35 -0.35 -0.35 0 -0.13}, ...
-    'y', {1.2222 1.1136 1.05 1.05 1 1.05});
+    'x', {-0.0559 -0.2798 -0.2798 -0.2798 0 -0.13}, ...
+    'y', {1.2222 1.005 1.005 1.005 1 1.05});
 
 for p = 1:6
     text(params(p).x, params(p).y, params(p).text, 'Parent', params(p).panel, ...
         'FontSize', 10, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
 end
-    
-printFigure('out/Figure5.pdf')
+   
+printFigure('out/v4/Figure5.pdf')
 close
 
 clearvars

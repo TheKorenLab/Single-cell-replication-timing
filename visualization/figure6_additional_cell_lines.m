@@ -1,12 +1,13 @@
+cd('~/Desktop/single_cell_manuscript/')
 load_single_cell_project
 
 load('data/hg37_genome_metadata.mat', 'genome_windows')
-load('data/processed/cell_line_pca.mat', 'pcs', 'pca_labels')
-load('data/processed/reference_bulk_profiles.mat', 'ref', 'r_bulk')
+load('data/processed3/cell_line_pca.mat', 'pcs', 'pca_labels')
+load('data/processed3/reference_bulk_profiles.mat', 'ref', 'r_bulk')
 
 data = struct;
 for sample = 1:9
-    data.(samples{sample}) = load(['data/processed/' samples{sample} '.mat'], ...
+    data.(samples{sample}) = load(['data/processed3/' samples{sample} '.mat'], ...
         'replication_state_filtered', 'percent_replicated_filtered', 'is_included_chr', ...
         'aggregate_S_G1', 'single_cell_IRs', 'late_IR_class', 'replication_tracks');
 end
@@ -17,39 +18,39 @@ cell_line_colors = {'#41AE76','#238B45', '#005824', '#74A9CF', '#2B8CBE', '#045A
 %% Figure skeleton
 
 figure6 = figure;
-set(figure6, 'Position', [63.5 22.86 18 22.86])
+set(figure6, 'Position', [63.5 22.86 18 18.5])
 
-panelA = struct('top', axes('Position', [0.92 20.7 7.4 1.5]), ...
-    'bottom', axes('Position', [0.92 18 7.4 2.5]));
+panelA = struct('top', axes('Position', [0.92 17.1 7.4 1]), ...
+    'bottom', axes('Position', [0.92 15 7.4 2]));
 
-panelB = struct('top', axes('Position', [10.1 20.7 7.4 1.5]), ...
-    'bottom', axes('Position', [10.1 18 7.4 2.5]));
+panelB = struct('top', axes('Position', [10.1 17.1 7.4 1]), ...
+    'bottom', axes('Position', [10.1 15 7.4 2]));
 
-panelC = struct('bulk', axes('Position', [0.92 14.859 4.5 1.5]), ...
+panelC = struct('bulk', axes('Position', [0.92 12.3 4.5 1]), ...
     'sc1', axes(), 'sc2', axes(), 'sc3', axes(), 'sc4', axes(), 'sc5', axes(), 'sc6', axes());
 
-panelD = axes('Position', [11.5 11.6 6 4.5]);
+panelD = axes('Position', [11.5 9.8 5.1 3.5]);
 
 panelE = struct('left', axes(), 'middle', axes(), 'middle_inset', axes(), 'right', axes());
 
-insetE = axes('Position', [12.1 6.6096 0.65 3.1], 'Visible', 'off');
+insetE = axes('Position', [12.1 5.2 0.65 3.1], 'Visible', 'off');
 
 panelF = struct('left', axes(), 'middle', axes(), 'middle_inset', axes(), 'right', axes());
 
-insetF = axes('Position', [12.1 0.89 0.65 3.1], 'Visible', 'off');
+insetF = axes('Position', [12.1 0.75 0.65 3.1], 'Visible', 'off');
 
 panels = {panelC.sc1 panelC.sc2 panelC.sc3 panelC.sc4 panelC.sc5 panelC.sc6};
-y = linspace(12.5, 0.89, 6);
+y = linspace(10.368, 0.75, 6);
 
 for p = 1:6
-    set(panels{p}, 'Units', 'centimeters', 'Position', [0.92 y(p) 4.5 2.2])
+    set(panels{p}, 'Units', 'centimeters', 'Position', [0.92 y(p) 4.5 1.85])
 end
 
 panels = {panelE.left panelE.middle panelE.middle_inset panelE.right ...
     panelF.left panelF.middle panelF.middle_inset panelF.right};
 
 x = [7.25 10.25 12.75 15.5];
-y = [6.6096 0.89];
+y = [5.2 0.75];
 
 pos = cell(4, 2);
 for xi = 1:4
@@ -160,7 +161,7 @@ ylabel(panelD, 'Principal Component 2')
 title(panelD, 'Replication Trajectories')
 
 legendD = legend(panelD, cell_line_names(1:9));
-set(legendD, 'Units', 'inches', 'Position', [2.8581 4.8945 0.7222 1.1111])
+set(legendD, 'Units', 'inches', 'Position', [2.85 3.9 0.7222 1.1111])
 legendD.ItemTokenSize(1) = 10;
 
 %% Panel E
@@ -295,6 +296,6 @@ for p = 1:size(params, 2)
         'FontSize', 10, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
 end
 
-printFigure('out/Figure6.pdf')
+printFigure('out/v4/Figure6.pdf')
 close
 clearvars

@@ -1,7 +1,8 @@
+cd('~/Desktop/single_cell_manuscript/')
 load_single_cell_project
 
 load('data/hg37_genome_metadata.mat', 'genome_windows')
-load('data/processed/GM12878.mat', 'single_cell_IRs', 'replication_state_filtered', ...
+load('data/processed3/GM12878.mat', 'single_cell_IRs', 'replication_state_filtered', ...
     'percent_replicated_filtered', 'is_included_chr', 'aggregate_S_G1', 'IR_range', ...
     'firing_order_frequency')
 
@@ -46,24 +47,25 @@ bar_colors = {'#DE2C26', '#3182BD', '#636362', '#BDBDBD'};
 %% Figure skeleton
 
 figure4 = figure;
-set(figure4, 'Position', [63.5 22.86 18 22.86])
 
-panelA = struct('top', axes('Position', [6.35 20.5 5.75 1.5]), ...
-    'bottom', axes('Position', [6.35 17.8 5.75 2.5], 'Box', 'off'));
+set(figure4, 'Position', [63.5 22.86 18 18.5])
 
-panelB = axes('Position', [0.92 17.8 3 3]);
+panelA = struct('top', axes('Position', [6.35 16.9 5.75 1.2]), ...
+    'bottom', axes('Position', [6.35 14.75 5.75 2.1], 'Box', 'off'));
 
-panelC = axes('Position', [0.92 11.5 6.8  3.75]);
+panelB = axes('Position', [0.92 15.3 2.8 2]);
 
-panelD = axes('Position', [2.12 6 4.4 2.8]);
+panelC = axes('Position', [0.92 9.6 6.25 3.4]);
 
-panelE = axes('Position', [14.75 17.8 3 3]);
+panelD = axes('Position', [2.045 4.68 4 2.5]);
 
-panelF = axes('Position', [12.15 12.25 5.6 3.2]);
+panelE = axes('Position', [14.95 15.3 2.8 2]);
 
-panelG = axes('Position', [12.15 7.25 5.6 3.2]);
+panelF = axes('Position', [12.35 10.3 5.4 3.1]);
 
-panelH = axes('Position', [0.92 0.88 16.86 3.3]);
+panelG = axes('Position', [12.35 5.53 5.4 3.1]);
+
+panelH = axes('Position', [0.92 0.7 16.86 2.94]);
 
 %% Panel A
 
@@ -105,6 +107,8 @@ pos = xl.Position;
 pos(2) = -0.5;
 set(xl, 'Position', pos)
 
+ylabel(panelA.bottom, '% Replicated')
+
 for IR = 1:size(params, 2)
     plot(params(IR).IR_X * ones(1,2), params(IR).Y, 'k', 'LineWidth', 0.7, 'Parent', panelA.top)
     plot(params(IR).IR_X * ones(1,2), [1 num_cells], 'k', 'LineWidth', 0.7, 'Parent', panelA.bottom)
@@ -117,10 +121,10 @@ yyaxis(panelA.bottom, 'right')
 set(panelA.bottom, 'YColor', 'k', 'YTick', [])
 ylabel(panelA.bottom, [num2str(num_cells) ' cells'])
 
-text_params = struct('X', {-0.3044 1.1061}, 'Y', 0.5855, 'text', {'Order' 'Timing'});
+text_params = struct('X', {-0.3289 1.1368}, 'Y', 0.8208, 'text', {'Order' 'Timing'});
 
 for p = 1:2
-    text(text_params(p).X, text_params(p).Y, text_params(p).text, 'FontSize', 7, ...
+   text(text_params(p).X, text_params(p).Y, text_params(p).text, 'FontSize', 7, ...
         'Parent', panelA.bottom, 'Units', 'normalized')
 end
 
@@ -154,7 +158,7 @@ title(panelB, 'Firing Order')
 legendB = legend(panelB, b([4 3 2 1]), {'Fired as predicted', 'Unfired as predicted', ...
     'Delayed firing', 'Premature firing'});
 legendB.ItemTokenSize(1) = 10;
-set(legendB, 'Units', 'centimeters', 'Position', [0.92 21.3783 3 1.3229])
+set(legendB, 'Units', 'centimeters', 'Position', [7.27 11.6771 3 1.3229])
 
 %% Panel C
 
@@ -251,57 +255,57 @@ colormap(panelH, cmap)
 colorbarH = colorbar(panelH);
 pos = get(panelH, 'Position');
 set(colorbarH, 'Units', 'centimeters', 'Orientation', 'horizontal', ...
-    'Position', [pos(1)+pos(3)-2.55 pos(2)+pos(4)+0.15 2.55 0.4], 'Ticks', 20:20:90)
+    'Position', [pos(1)+pos(3)-2.55 pos(2)+pos(4)+0.08 2.55 0.4], 'Ticks', 20:20:90)
 
-text(0.8114, 1.1275, ['% of' newline 'S phase'], 'FontSize', 7, 'Units', 'normalized', ...
-    'HorizontalAlignment', 'center', 'Parent', panelH);
+ylabel(colorbarH, {'% of' 'S phase'}, 'FontSize', 7, 'Position', [-21.7 0.5], ...
+    'VerticalAlignment', 'middle')
 
 %% Arrows
 
 % A->B, A->E
-params = struct('X', {0.3042 0.6966}, 'dir', {-1 1});
+params = struct('X', {0.2959 0.7123}, 'dir', {-1 1});
 
 for p = 1:2
-    annotation('arrow', params(p).X + [0 params(p).dir * 0.0748], 0.8334 * ones(1, 2), ...
-        'Color', 'k', 'LineWidth', 0.6)
+    annotation('arrow', params(p).X + [0 params(p).dir * 0.0748], 0.8772 * ones(1, 2), ...
+        'Color', 'k', 'LineWidth', 0.6);
 end
 
 
 % B->C, E->F
-params = struct('X', {0.1782 0.8166}, 'dir', {1 -1});
+params = struct('X', {0.1723 0.8323}, 'Y', {0.7953 0.8170}, 'dir', {1 -1});
 
 for p = 1:2
-    annotation('arrow', params(p).X + [0 params(p).dir * 0.032], [0.7553 0.6898], ...
-        'Color', 'k', 'LineWidth', 0.6)
+    annotation('arrow', params(p).X + [0 params(p).dir * 0.032], params(p).Y + [0 -0.0655], ...
+        'Color', 'k', 'LineWidth', 0.6);
 end
 
 % C->D
-annotation('arrow', [0.2538 0.2538], [0.4645 0.4121], 'Color', 'k', 'LineWidth', 0.6)
+annotation('arrow', [0.2264 0.2264], [0.4645 0.4121], 'Color', 'k', 'LineWidth', 0.6)
 
 % F->H
-X = linspace(0.5269, 0.62, 3);
-Y = [0.233 0.3922 0.5033 0.6144];
+X = [0.5269 0.5911 0.6376];
+Y = [0.233 0.3831 0.5033 0.6411];
 
 params = struct('X', {[2 3], [2 3], [2 2], [1 2], [1 1]}, ...
     'Y', {[4 4], [2 2], [2 4], [3 3], [3 1]}, 'style', 'line');
 params(5).style = 'arrow';
 
 for p = 1:5
-    annotation(params(p).style, X(params(p).X), Y(params(p).Y), 'Color', 'k', 'LineWidth', 0.7)
+   annotation(params(p).style, X(params(p).X), Y(params(p).Y), 'Color', 'k', 'LineWidth', 0.7)
 end
 
 %% Annotate panels
 
 params = struct('panel', {panelA.top panelB panelC panelD panelE panelF panelG panelH}, ...
     'text', {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}, ...
-    'x', {-0.0797 -0.2482 -0.1043, -0.0833 -0.2011 -0.0625 -0.0625 -0.0445}, ...
+    'x', {-0.0797 -0.2482 -0.1043, -0.0833 -0.2011 -0.0625 -0.0625 -0.0361}, ...
     'y', {1.1182 1.1528 1.1226 1.1806 1.094 1.1272 1.1272 1.1064});
 
 for p = 1:8
-   text(params(p).x, params(p).y, params(p).text, 'Parent', params(p).panel, ...
+   t=text(params(p).x, params(p).y, params(p).text, 'Parent', params(p).panel, ...
         'FontSize', 10, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
 end
 
-printFigure('out/Figure4.pdf')
+printFigure('out/v4/Figure4.pdf')
 close
 clearvars

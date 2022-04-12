@@ -1,42 +1,45 @@
+cd('~/Desktop/single_cell_manuscript/')
+
 load_single_cell_project
 sc_colormap = [convert_hex(g1_light); convert_hex(s_light{1})];
 
 load('data/hg37_genome_metadata.mat', 'genome_windows')
 
-load('data/processed/GM12878.mat', 'is_included_chr', 'percent_replicated_filtered', ...
+load('data/processed3/GM12878.mat', 'is_included_chr', 'percent_replicated_filtered', ...
     'replication_state_filtered', 'window_IR_frequency', 'replication_tracks', ...
     'single_cell_IRs', 'replication_state_masked', 'aggregate_S_G1')
 
 %% Figure skeleton
 
 figure3 = figure;
-set(figure3, 'Position',  [63.5 22.86 18 20.32])
 
-panelA = struct('top', axes('Position', [0.92 18.2 9.58 1.5]), ...
-    'middle', axes('Position', [0.92 15 9.58 3]), ...
-    'bottom', axes('Position', [0.92 13.2 9.58 1.65]));
+set(figure3, 'Position',  [63.5 22.86 18 18.5])
 
-insetA = axes('Position', [0.92 11.6 9.58 1.6], 'Visible', 'off');
+panelA = struct('top', axes('Position', [0.92 16.5569 9.58 1.3646]), ...
+    'middle', axes('Position', [0.92 13.6458 9.58 2.7292]), ...
+    'bottom', axes('Position', [0.92 12.0083 9.58 1.501]));
 
-panelB = struct('left', axes('Position', [0.92 8.8 3.5 2.8]), ...
-    'right', axes('Position', [6.7 8.8 3.5 2.8]));
+insetA = axes('Position', [0.92 10.5528 9.58 1.4556], 'Visible', 'off');
 
-panelC = struct('left_top', axes('Position', [0.92 5.985 3.5 1.75]), ...
-    'left_middle', axes('Position', [0.92 2.785 3.5 3]), ...
-    'left_bottom', axes('Position', [0.92 0.835 3.5 1.75]), ...
-    'right', axes('Position', [6.7 0.835 3.5 6]));
+panelB = struct('left', axes('Position', [0.92 8.0056 3.5 2.5472]), ...
+    'right', axes('Position', [6.7 8.0056 3.5 2.5472]));
 
-panelD = axes('Position', [13 17.2 3.5 2.5]);
+panelC = struct('left_top', axes('Position', [0.92 5.4447 3.5 1.592]), ...
+    'left_middle', axes('Position', [0.92 2.5336 3.5 2.7292]), ...
+    'left_bottom', axes('Position', [0.92 0.7596 3.5 1.592]), ...
+    'right', axes('Position', [6.7 0.7596 3.5 5.4583]));
 
-panelE = struct('top', axes('Position', [12.5 12.5 5 2.7]), ...
-    'bottom', axes( 'Position', [13.1 9 3.8 2.7]));
+panelD = axes('Position', [13 15.6472 3.5 2.2743]);
 
-insetE = axes('Position', [12.5 11.7 5 0.8], 'Visible', 'off');
+panelE = struct('top', axes('Position', [12.5 11.3715 5 2.4562]), ...
+    'bottom', axes( 'Position', [13.1 8.1875 3.8 2.4563]));
 
-panelF = struct('top', axes('Position', [12.5 4.335 5 2.7]), ...
-    'bottom', axes('Position', [13.1 0.835 3.8 2.7]));
+insetE = axes('Position', [12.5 10.6437 5 0.7278], 'Visible', 'off');
 
-insetF = axes('Position', [12.5 3.535 5 0.8], 'Visible', 'off');
+panelF = struct('top', axes('Position', [12.5 3.9436 5 2.4563]), ...
+    'bottom', axes('Position', [13.1 0.7596 3.8 2.4562]));
+
+insetF = axes('Position', [12.5 3.2159 5 0.7278], 'Visible', 'off');
 
 %% Panel A
 
@@ -295,7 +298,7 @@ for p = 1:6
     text(params(p).x, params(p).y, params(p).text, 'Parent', params(p).panel, ...
         'FontSize', 10, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
 end
- 
-printFigure('out/Figure3.pdf')
+
+printFigure('out/v4/Figure3.pdf')
 close
 clearvars

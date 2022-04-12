@@ -1,32 +1,34 @@
 %% Load data
 
+cd('~/Desktop/single_cell_manuscript/')
 load_single_cell_project
 
 load('data/hg37_genome_metadata.mat', 'genome_windows')
-load('data/processed/reference_bulk_profiles.mat', 'ref', 'r_bulk')
-GM12878 = load('data/processed/GM12878.mat', 'replication_state_filtered', ...
+load('data/processed3/reference_bulk_profiles.mat', 'ref', 'r_bulk')
+GM12878 = load('data/processed3/GM12878.mat', 'replication_state_filtered', ...
     'percent_replicated_filtered', 'is_included_chr', 'aggregate_S_G1');
 
-GM18507 = load('data/processed/GM18507.mat', 'replication_state_filtered', ...
+GM18507 = load('data/processed3/GM18507.mat', 'replication_state_filtered', ...
     'percent_replicated_filtered', 'is_included_chr', 'aggregate_S_G1');
 
 %% Figure skeleton
 figure2 = figure;
-set(figure2, 'Position',  [63.5 22.86 18 21.2])
 
-panelA = struct('top', axes('Position', [0.92 18.75   16.58 1.5]), ...
-'bottom', axes('Position', [0.92 14.3 16.58 4.25], 'Box', 'off'));
+set(figure2, 'Position',  [63.5 22.86 18 18.5])
 
-inset = axes('Position', [0.92 12.75 16.58 1.55], 'Visible', 'off');
+panelA = struct('top', axes('Position', [0.92 16.4438 16.58 1.3078]), ...
+'bottom', axes('Position', [0.92 12.564 16.58 3.7055], 'Box', 'off'));
 
-panelA1 = struct('top', axes('Position', [2.1 11.25 2 1.5]), ...
-    'bottom', axes('Position', [2.1 7.25 2 3.8], 'Box', 'off'));
+inset = axes('Position', [0.92 11.2126 16.58 1.3514], 'Visible', 'off');
 
-panelA2 = struct('top', axes('Position', [7  11.25 9.75 1.5]), ...
-    'bottom', axes('Position', [7 7.25 9.75 3.8], 'Box', 'off'));
+panelA1 = struct('top', axes('Position', [2.1 9.9047 2 1.3078]), ...
+    'bottom', axes('Position', [2.1 6.4172 2 3.3131], 'Box', 'off'));
 
-panelB = struct('top', axes('Position', [0.92 4.2 16.58 1.5]), ...
-    'bottom', axes('Position', [0.92 0.75 16.58 3.25], 'Box', 'off'));
+panelA2 = struct('top', axes('Position', [7 9.9047 9.75 1.3078]), ...
+    'bottom', axes('Position', [7 6.4172 9.75 3.3131], 'Box', 'off'));
+
+panelB = struct('top', axes('Position', [0.92 3.758 16.58 1.3078]), ...
+    'bottom', axes('Position', [0.92 0.75 16.58 2.8336], 'Box', 'off'));
 
 %% Heatmaps
 
@@ -96,9 +98,14 @@ set(legendA, 'Units', 'centimeters', 'Orientation', 'horizontal', ...
     'Position', [pos(1) pos(2)+pos(4)+0.1 5.8385 0.4233])
 
 colorbarA = colorbar(panelA.bottom);
-set(colorbarA, 'Orientation', 'horizontal', 'Ticks', [2.5 3.5], 'TickLabels', [2 4], ...
+set(colorbarA, 'Orientation', 'horizontal', 'Ticks', [],...
     'YAxisLocation', 'top', 'Units', 'centimeters', ...
     'Position', [pos(1)+pos(3)-2.6988 pos(2)+pos(4)+0.1 2.6988 0.4233])
+t = ylabel(colorbarA, 'Copy Number', 'FontSize', 7, 'Position', [1.35 0.5], 'VerticalAlignment', 'middle');
+
+cb_labels = axes('Position', colorbarA.Position, 'Visible', 'off', 'XLim', [0 1], 'YLim', [0 1]);
+text([0.25 0.75], [0.5 0.5], {'2' '4'}, 'FontName', 'Arial', 'FontSize', 7, ...
+    'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle', 'Parent', cb_labels)
 
 %% Connect insets
 
@@ -129,6 +136,6 @@ for p = 1:2
         'FontSize', 10, 'FontName', 'Arial', 'FontWeight', 'bold', 'Units', 'normalized');
 end
 
-printFigure('out/Figure2.pdf')
+printFigure('out/v4/Figure2.pdf')
 close
 clearvars
