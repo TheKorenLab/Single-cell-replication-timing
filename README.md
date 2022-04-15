@@ -1,6 +1,6 @@
 # Single cell replication timing in human cell lines
 
-This repo contains the scripts associated with "High-throughput analysis of DNA replication in single human cells reveals the complex nature of replication timing control" (Massey & Koren, 2021).
+This repo contains the scripts associated with "High-throughput analysis of single human cells reveals the complex nature of DNA replication timing control" (Massey & Koren, 2021).
 
 The manuscript can be viewed on <i>Biorxiv</i>: https://doi.org/10.1101/2021.05.14.443897
 
@@ -18,3 +18,5 @@ MATLAB <i>v2019a</i>
 
 <h3> Hardware </h3>
 MATLAB code was run on an iMac desktop (OS 10.14.6) with a 3.2 GHz Intel Core i5 processor and 16 GB RAM. All other code was run on a 64-core CentOS 7.6.1810 high-performance cluster with 256GB RAM.
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6463446.svg)](https://doi.org/10.5281/zenodo.6463446)
