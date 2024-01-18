@@ -1,8 +1,6 @@
 # Single cell replication timing in human cell lines
 
-This repo contains the scripts associated with "High-throughput analysis of single human cells reveals the complex nature of DNA replication timing control" (Massey & Koren, 2021).
-
-The manuscript can be viewed on <i>Biorxiv</i>: https://doi.org/10.1101/2021.05.14.443897
+This repo contains the scripts associated with "High-throughput analysis of single human cells reveals the complex nature of DNA replication timing control" (Massey & Koren, 2022), published in <i>Nature Communications</i>: https://www.nature.com/articles/s41467-022-30212-y
 
 <h3> Software </h3>
 The following versions were used to process the data presented in the manuscript:
